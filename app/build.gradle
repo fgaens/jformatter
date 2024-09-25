@@ -2,9 +2,10 @@ plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("io.micronaut.application") version "4.4.2"
     id("io.micronaut.aot") version "4.4.2"
+    id("pl.allegro.tech.build.axion-release") version "1.15.0"
 }
 
-version = "0.1"
+version = scmVersion.version
 group = "be.codesolutions"
 
 repositories {
@@ -71,6 +72,12 @@ tasks.named("dockerfileNative") {
         "-Dio.netty.allocator.numDirectArenas=0",
         "-Dio.netty.noPreferDirect=true"
     )
+}
+
+scmVersion {
+    tag {
+        prefix = ''
+    }
 }
 
 

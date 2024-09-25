@@ -5,6 +5,33 @@ on:
     branches: [ main ]
 
 jobs:
+
+  bump-version:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Set up Java 21 (Corretto)
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'corretto'
+
+      - name: Bump version
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          ./gradlew release
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
+
   build-and-deploy:
     runs-on: ubuntu-latest
 
