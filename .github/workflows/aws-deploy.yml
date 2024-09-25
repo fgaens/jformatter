@@ -48,6 +48,15 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew :app:optimizedJitJarAll
 
+      - name: Inspect build directory
+        run: |
+          echo "Contents of the app directory:"
+          ls -R app
+          echo "Contents of the app/build directory:"
+          ls -R app/build
+          echo "Contents of the app/build/libs directory:"
+          ls -R app/build/libs
+
       - name: Run tests
         run: ./gradlew test
 
