@@ -4,8 +4,9 @@ on:
   push:
     branches: [ main ]
 
-jobs:
+permissions: write-all
 
+jobs:
   bump-version:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
