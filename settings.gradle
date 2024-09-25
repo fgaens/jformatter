@@ -1,0 +1,6 @@
+
+
+rootProject.name="jformatter"
+
+include("app")
+include("infra")

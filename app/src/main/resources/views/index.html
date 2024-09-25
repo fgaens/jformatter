@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java Object Deserializer</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        textarea { width: 100%; height: 150px; margin-bottom: 10px; }
+        button { padding: 10px 20px; }
+        #output { background-color: #f0f0f0; }
+    </style>
+</head>
+<body>
+    <h1>Java Object Deserializer</h1>
+    <form id="deserializerForm">
+        <textarea name="input" id="input" placeholder="Enter serialized Java string (Base64 encoded)" th:text="${input}"></textarea>
+        <br>
+        <button type="button" id="transformButton">Transform</button>
+    </form>
+    <br>
+    <textarea id="output" readonly th:text="${output}"></textarea>
+    <p id="error" style="color: red;" th:text="${error}"></p>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('deserializerForm');
+            const input = document.getElementById('input');
+            const output = document.getElementById('output');
+            const error = document.getElementById('error');
+            const transformButton = document.getElementById('transformButton');
+
+            transformButton.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                fetch('/transform', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': [[${_csrf != null} ? ${_csrf.token} : '']]
+                    },
+                    body: JSON.stringify({ input: input.value })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        error.textContent = data.error;
+                        output.value = '';
+                    } else {
+                        output.value = data.output || '';
+                        error.textContent = '';
+                    }
+                })
+                .catch(err => {
+                    error.textContent = 'An error occurred: ' + err.message;
+                    output.value = '';
+                });
+            });
+        });
+        /*]]>*/
+    </script>
+</body>
+</html>

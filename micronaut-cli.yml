@@ -1,0 +1,6 @@
+applicationType: default
+defaultPackage: be.codesolutions
+testFramework: junit
+sourceLanguage: java
+buildTool: gradle
+features: [amazon-api-gateway-http, app-name, aws-cdk, aws-lambda, aws-lambda-events-serde, aws-lambda-handler-apigateway-v2, gradle, http-client-test, java, java-application, junit, logback, micronaut-aot, micronaut-build, micronaut-http-validation, properties, readme, serialization-jackson, shade, snapstart, static-resources, views-fieldset, views-thymeleaf, x86]
