@@ -1,0 +1,39 @@
+name: Deploy to AWS
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '21'
+          distribution: 'corretto'
+
+      - name: Build with Gradle
+        run: ./gradlew :app:optimizedJitJarAll
+
+      - name: Run tests
+        run: ./gradlew test
+
+      - name: Set up AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+
+      - name: Set up CDK
+        run: |
+          npm install -g aws-cdk
+          cd infra
+          cdk synth --quiet true
+          cdk deploy --require-approval never
+          cd ..
