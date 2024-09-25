@@ -1,25 +1,25 @@
 package be.codesolutions;
 
 import io.micronaut.aws.cdk.function.MicronautFunction;
-import io.micronaut.aws.cdk.function.MicronautFunctionFile;
 import io.micronaut.starter.application.ApplicationType;
-import io.micronaut.starter.options.BuildTool;
 import software.amazon.awscdk.CfnOutput;
 import software.amazon.awscdk.Duration;
 import software.amazon.awscdk.Stack;
 import software.amazon.awscdk.StackProps;
-import software.amazon.awscdk.services.lambda.Runtime;
-import software.amazon.awscdk.services.lambda.Architecture;
-import software.amazon.awscdk.services.lambda.SnapStartConf;
-import software.amazon.awscdk.services.lambda.Alias;
-import software.amazon.awscdk.services.lambda.Version;
 import software.amazon.awscdk.services.apigatewayv2.alpha.HttpApi;
 import software.amazon.awscdk.services.apigatewayv2.integrations.alpha.HttpLambdaIntegration;
+import software.amazon.awscdk.services.lambda.Alias;
+import software.amazon.awscdk.services.lambda.Architecture;
 import software.amazon.awscdk.services.lambda.Code;
 import software.amazon.awscdk.services.lambda.Function;
+import software.amazon.awscdk.services.lambda.Runtime;
+import software.amazon.awscdk.services.lambda.SnapStartConf;
 import software.amazon.awscdk.services.lambda.Tracing;
+import software.amazon.awscdk.services.lambda.Version;
 import software.amazon.awscdk.services.logs.RetentionDays;
 import software.constructs.Construct;
+
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,16 +65,11 @@ public class AppStack extends Stack {
     }
 
     public static String functionPath() {
-        return "../app/build/libs/" + functionFilename();
-    }
-
-    public static String functionFilename() {
-        return MicronautFunctionFile.builder()
-            .optimized()
-            .graalVMNative(false)
-            .version("0.1")
-            .archiveBaseName("app")
-            .buildTool(BuildTool.GRADLE)
-            .build();
+        File libsDir = new File("../app/build/libs");
+        File[] jarFiles = libsDir.listFiles((dir, name) -> name.matches("app-.*-all-optimized\\.jar"));
+        if (jarFiles == null || jarFiles.length == 0) {
+            throw new RuntimeException("No matching JAR file found in " + libsDir.getAbsolutePath());
+        }
+        return jarFiles[0].getAbsolutePath();
     }
 }
